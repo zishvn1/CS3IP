@@ -1,2 +1,5 @@
 car_website/settings.py 
+db.sqlite3
+
 #ignore django settings
+
