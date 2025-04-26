@@ -137,5 +137,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # email backend settings (needed to send password reset emails) - removed due to sensitive info during commit
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'drivetime.noreply@gmail.com'  # gmail email address
+EMAIL_HOST_PASSWORD = 'vted jiuk oilj dybm'  # app password 
+DEFAULT_FROM_EMAIL = 'drivetime.noreply@gmail.com'  # default email address where emails will be sent from
+AUTHENTICATION_BACKENDS = ['listings.authentication_backends.EmailAuthBackend'] 
+LOGIN_URL = '/login/' # users are redirected if they are not logged in
 
 
