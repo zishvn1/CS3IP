@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ car.make }} {{ car.model }} - Details</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'car_detail.css' %}">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+<nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="image-section">
+                <div class="image-carousel-wrapper">
+                    <button class="carousel-nav left" onclick="changeSlide(-1)">&#10094;</button>
+                    
+                    {% if car.images.all %}
+                        {% for img in car.images.all %}
+                            <img src="{{ img.image.url }}"
+                                 class="carousel-image {% if forloop.first %}active{% endif %}"
+                                 alt="{{ car.make }} {{ car.model }} {{ forloop.counter }}">
+                        {% endfor %}
+                    {% else %}
+                        <img src="{% static 'images/placeholder.jpg' %}"
+                             class="carousel-image active"
+                             alt="No image available">
+                    {% endif %}
+                    
+                    <button class="carousel-nav right" onclick="changeSlide(1)">&#10095;</button>
+                </div>
+            
+                {% if car.images.all %}
+                    <div class="thumbnail-row">
+                        {% for img in car.images.all %}
+                            <img src="{{ img.image.url }}"
+                                 class="thumbnail"
+                                 onclick="setSlide({{ forloop.counter0 }})"
+                                 alt="Thumbnail {{ forloop.counter }}">
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+    
+        <!-- right side car info -->
+        <div class="info-section">
+            <h1>{{ car.make }} {{ car.model }} ({{ car.year }})</h1>
+            <p><strong>Mileage:</strong> {{ car.mileage }} miles</p>
+            <p><strong>Engine Size:</strong> {{ car.engine_size }} liters</p>
+            <p><strong>Fuel Type:</strong> {{ car.fuel_type }}</p>
+            <p><strong>Transmission:</strong> {{ car.transmission }}</p>
+            <p><strong>Number of Doors:</strong> {{ car.number_of_doors }}</p>
+            <p><strong>Price:</strong> £{{ car.price }}</p>
+
+            <h2>Seller Information</h2>
+            <p><strong>Seller:</strong> {{ car.user.first_name }}</p>
+            <p><strong>Phone Number:</strong> {{ car.phone_number|default:"Not Provided" }}</p>
+            <p><strong>City:</strong> {{ car.city|default:"Not Provided" }}</p>
+
+        
+        </div>
+    </div>
+
+    
+    <h2 class="bottom-carousel-title">Other Cars from {{ car.user.first_name }}</h2>
+
+    {% if car.user.car_set.all.count > 1 %}
+    <div class="bottom-carousel-container">
+        <div class="bottom-carousel-wrapper">
+            <button class="bottom-carousel-arrow left" onclick="scrollOtherCars(-1)">&#10094;</button>
+            <div class="bottom-carousel" id="otherCarsCarousel">
+                {% for other_car in car.user.car_set.all %}
+                    {% if other_car.id != car.id %}
+                        <div class="other-car-card">
+                            <a href="{% url 'car_detail' other_car.id %}">
+                                {% if other_car.images.first %}
+                                    <img src="{{ other_car.images.first.image.url }}" alt="{{ other_car.make }} {{ other_car.model }}">
+                                {% elif other_car.image %}
+                                    <img src="{{ other_car.image.url }}" alt="{{ other_car.make }} {{ other_car.model }}">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.jpg' %}" alt="Not available">
+                                {% endif %}
+                                <p>{{ other_car.make }} {{ other_car.model }}</p>
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button class="bottom-carousel-arrow right" onclick="scrollOtherCars(1)">&#10095;</button>
+        </div>
+    </div>
+    {% else %}
+        <p class="nothing-message">Nothing to show here</p>
+    {% endif %}
+    
+
+    </div>
+    
+
+    <script>
+    
+        // images being shown for current car
+        let currentSlide = 0; // first image
+        const slides = document.querySelectorAll(".carousel-image"); // gets all car images for car
+    
+        // gets correct image based on the index
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle("active", i === index);
+            });
+        }
+    
+        // go to next or previous image
+        function changeSlide(step) {
+            currentSlide += step;
+            if (currentSlide < 0) currentSlide = slides.length - 1; // jump to last image if arrow to show image before first image is clicked
+            if (currentSlide >= slides.length) currentSlide = 0; // go to back first image if arrow to show image after last image is clicked
+            showSlide(currentSlide);
+        }
+    
+        // jump to image if image thumbnail is clicked below main image being shown
+        function setSlide(index) {
+            currentSlide = index;
+            showSlide(currentSlide);
+        }
+    // make sure first image is visible when page loads
+        document.addEventListener("DOMContentLoaded", () => {
+            showSlide(currentSlide);
+        });
+
+        // other available cars carousel at the bottom 
+function scrollOtherCars(direction) {
+    const container = document.getElementById("otherCarsCarousel");
+    const scrollAmount = 220;
+    container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,80 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Account Details</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+    <header>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <!-- Main Navigation Links -->
+            <nav class="main-nav" aria-label="Main navigation">
+
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+            <!-- Account Navigation Links -->
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <body>
+        <!-- Content Wrapper to Center Login Form -->
+        <div class="content-wrapper">
+            <div class="login-container">
+                <h1>Login</h1>
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                <label for="id_username">Email:</label>
+                <input type="email" name="username" required>
+            
+                <label for="id_password">Password:</label>
+                <input type="password" name="password" required>
+            
+                <button type="submit">Login</button>
+            
+                <p><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
+            </form>  
+                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+
+                <p class="admin-link">
+                    <a href="{% url 'admin:index' %}">Admin Login</a>
+                </p>
+                
+            </div>
+        </div>
+    
+    </body>
+</html>

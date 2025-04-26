@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Cars</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'listings/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'car_list.css' %}">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+    
+            <!-- Main Navigation Links -->
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li>
+                        <a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">
+                            Available Cars
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">
+                            Recommended Cars
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">
+                            Upload Your Car
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">
+                            Your Favorites
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">
+                            Your Cars
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+    
+            <!-- Account Navigation Links -->
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li>
+                        <a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">
+                            Your Account
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Filters Section -->
+        <aside class="filters">
+            <h2>Filters</h2>
+            <form method="GET" action="{% url 'car_list' %}">
+                <div class="filter-group">
+                    <label for="fuel_type">Fuel Type:</label>
+                    {{ form.fuel_type }}
+                </div>
+                <div class="filter-group">
+                    <label for="make">Make:</label>
+                    {{ form.make }}
+                </div>
+                <div class="filter-group">
+                    <label for="model">Model:</label>
+                    {{ form.model }}
+                </div>
+                <div class="filter-group">
+                    <label for="min_year">Min Year:</label>
+                    {{ form.min_year }}
+                </div>
+                <div class="filter-group">
+                    <label for="max_year">Max Year:</label>
+                    {{ form.max_year }}
+                </div>
+                <div class="filter-group">
+                    <label for="transmission">Transmission:</label>
+                    {{ form.transmission }}
+                </div>
+                <div class="filter-group">
+                    <label for="min_mileage">Min Mileage:</label>
+                    {{ form.min_mileage }}
+                </div>
+                <div class="filter-group">
+                    <label for="max_mileage">Max Mileage:</label>
+                    {{ form.max_mileage }}
+                </div>
+                <div class="filter-group">
+                    <label for="min_price">Min Price:</label>
+                    {{ form.min_price }}
+                </div>
+                <div class="filter-group">
+                    <label for="max_price">Max Price:</label>
+                    {{ form.max_price }}
+                </div>
+                <button type="submit">Search</button>
+                <a href="{% url 'car_list' %}" style="display: block; background-color: #dc3545; color: white; text-align: center; text-decoration: none; padding: 10px 0px; border-radius: 5px; width: 100%; font-size: 1rem; margin-top: 10px;">Reset Filter</a>
+            </form>
+        </aside>
+
+        <!-- Car List Section -->
+        <section class="car-list">
+            <form method="GET" action="{% url 'car_list' %}">
+                <label for="sort_by">Sort by:</label>
+                <select name="sort_by" id="sort_by">
+                    <option value="newest" {% if selected_sort == "newest" %}selected{% endif %}>Newest</option>
+                    <option value="lowest_price" {% if selected_sort == "lowest_price" %}selected{% endif %}>Lowest to Highest Price</option>
+                    <option value="highest_price" {% if selected_sort == "highest_price" %}selected{% endif %}>Highest to Lowest Price</option>
+                    <option value="oldest" {% if selected_sort == "oldest" %}selected{% endif %}>Oldest</option>
+                    <option value="lowest_mileage" {% if selected_sort == "lowest_mileage" %}selected{% endif %}>Lowest Mileage</option>
+                </select>
+                <button type="submit" style="background-color: #ffc107; color: #000; border: none; border-radius: 4px; padding: 6px 14px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; margin-left: 8px;">Sort</button>
+            </form>
+            
+
+            {% if cars %}
+            <div class="car-grid">
+                {% for car in cars %}
+                <div class="car-card">
+                    <a href="{% url 'car_detail' car.id %}">
+                        {% if car.images.first %}
+                            <img src="{{ car.images.first.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                        {% elif car.image %}
+                            <img src="{{ car.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                        {% else %}
+                            <img src="{% static 'images/placeholder.jpg' %}" alt="Not available">
+                        {% endif %}
+                    </a>
+                    
+                    <h3>{{ car.make }} {{ car.model }}</h3>
+                    <p>{{ car.year }} • {{ car.transmission }}</p>
+                    <p>Mileage: {{ car.mileage }} miles</p>
+                    <p>£{{ car.price }}</p>
+                    {% if user.is_authenticated %}
+                    {% if car.id in favorites %}
+                    <a href="{% url 'remove_favorite' car.id %}" class="btn btn-remove">Remove from Favorites</a>
+                    {% else %}
+                    <a href="{% url 'add_favorite' car.id %}" class="btn btn-add">Add to Favorites</a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No cars available at the moment.</p>
+            {% endif %}
+        </section>
+    </div>
+
+
+</body>
+</html>

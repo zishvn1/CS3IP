@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Your Car</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'upload_car.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% if user.is_authenticated %}
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Vehicle Information</legend>
+                <div class="form-row">
+                    <label for="id_make">Make:</label>
+                    <select id="id_make" name="make" required>
+                        <option value="">Select Make</option>
+                        {% for make in make_model_data.keys %}
+                            <option value="{{ make }}">{{ make }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="id_model">Model:</label>
+                    <select id="id_model" name="model" required>
+                        <option value="">Select Model</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="id_year">Year:</label>
+                    {{ form.year }}
+                    <label for="id_fuel_type">Fuel Type:</label>
+                    {{ form.fuel_type }}
+                </div>
+                <div class="form-row">
+                    <label for="id_engine_size">Engine Size:</label>
+                    {{ form.engine_size }}
+                    <label for="id_transmission">Transmission:</label>
+                    {{ form.transmission }}
+                </div>
+                <div class="form-row">
+                    <label for="id_mileage">Mileage:</label>
+                    {{ form.mileage }}
+                    <label for="id_price">Price:</label>
+                    {{ form.price }}
+                </div>
+                <div class="form-row">
+                    <label for="id_number_of_doors">Number of Doors:</label>
+                    {{ form.number_of_doors }}
+
+                    <label for="id_images">Images:</label>
+                    <div style="width: 100%;">
+                        <div class="custom-upload-wrapper">
+                            <input type="file" id="id_images" name="images" multiple accept="image/*" style="display: none;">
+                            <label for="id_images" class="custom-file-upload">+ Add Images</label>
+                            <span id="file-selected-text">No images selected</span>
+                            <div id="image-preview-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Contact Information</legend>
+                <div class="form-row">
+                    <label for="id_phone_number">Phone Number:</label>
+                    {{ form.phone_number }}
+                    <label for="id_city">City:</label>
+                    {{ form.city }}
+                </div>
+            </fieldset>
+
+            <button type="submit" class="btn-submit">Submit</button>
+        </form>
+
+        <script>
+// get the make/model data from the upload_car in views.py
+const makeModelData = {{ make_model_data|safe }};
+const makeSelect = document.getElementById("id_make");
+const modelSelect = document.getElementById("id_model");
+
+// populate model dropdown when a make is selected
+function populateModels(make, selectedModel = "") {
+    modelSelect.innerHTML = '<option value="">Select Model</option>'; // reset model dropdown
+    if (makeModelData[make]) {
+        makeModelData[make].forEach(model => {
+            const option = document.createElement("option");
+            option.value = model;
+            option.textContent = model;
+            if (model === selectedModel) option.selected = true; // if the form reloads after a validation error, restore the previously selected make and model
+
+            modelSelect.appendChild(option);
+        });
+    }
+}
+
+// when user selects a make, update the model options
+makeSelect.addEventListener("change", function () {
+    populateModels(this.value);
+});
+
+// when the page reloads, auto-fill make and model if data was submitted before 
+window.addEventListener("DOMContentLoaded", function () {
+    const selectedMake = "{{ form.data.make|default_if_none:'' }}";
+    const selectedModel = "{{ form.data.model|default_if_none:'' }}";
+    if (selectedMake) {
+        makeSelect.value = selectedMake;
+        populateModels(selectedMake, selectedModel);
+    }
+});
+
+// allow image uploads and preview them
+const fileInput = document.getElementById('id_images');
+const fileText = document.getElementById('file-selected-text');
+const previewContainer = document.getElementById('image-preview-container');
+
+fileInput.addEventListener('change', function () {
+    const files = Array.from(this.files);
+
+    // show names of the uploaded files
+    fileText.textContent = files.length > 0
+        ? files.map(file => file.name).join(', ')
+        : "No files selected.";
+
+    // remove all existing image previews before adding new ones
+    previewContainer.innerHTML = '';
+
+    // preview the selected images
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '180px';
+            img.style.borderRadius = '5px';
+            img.style.objectFit = 'cover';
+            previewContainer.appendChild(img);
+        };
+        reader.readAsDataURL(file); // read the image file to show preview
+    });
+});
+
+        </script>
+
+        {% else %}
+        <p style="font-size: 1.1rem; color: #333; text-align: center; margin-top: 30px;">
+            You must be logged in to upload a car. Please <a href="{% url 'login' %}" style="color: #0f9dba; text-decoration: none;">log in</a> to continue.
+        </p>
+        {% endif %}
+    </main>
+</body>
+</html>

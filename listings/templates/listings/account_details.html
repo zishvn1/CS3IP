@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Account Details</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'acc.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- left box, filter for preferences -->
+        <div class="section-box">
+            <h2>Vehicle Preferences</h2>
+            {% if not user.is_authenticated %}
+                <div class="error-message">
+                    You must be logged in to access your vehicle preferences. Please <a href="{% url 'login' %}">log in</a> to continue.
+                </div>
+            {% else %}
+
+            
+                <form method="POST" action="{% url 'account_details' %}">
+                    {% csrf_token %}
+                    <div class="vehicle-preferences">
+                        <div class="form-group">
+
+
+                            
+                            <label for="min_year">Min Year:</label>
+                            <select id="min_year" name="min_year">
+                                {% for year in year_choices %}
+                                    <option value="{{ year }}" {% if preferences.min_year == year %}selected{% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_year">Max Year:</label>
+                            <select id="max_year" name="max_year">
+                                {% for year in year_choices %}
+                                    <option value="{{ year }}" {% if preferences.max_year == year %}selected{% endif %}>{{ year }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="min_mileage">Min Mileage:</label>
+                            <select id="min_mileage" name="min_mileage">
+                                {% for mileage in mileage_choices %}
+                                    <option value="{{ mileage }}" {% if preferences.min_mileage == mileage %}selected{% endif %}>{{ mileage }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_mileage">Max Mileage:</label>
+                            <select id="max_mileage" name="max_mileage">
+                                {% for mileage in mileage_choices %}
+                                    <option value="{{ mileage }}" {% if preferences.max_mileage == mileage %}selected{% endif %}>{{ mileage }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="doors">Doors:</label>
+                            <select id="doors" name="doors">
+                                {% for door in doors_choices %}
+                                    <option value="{{ door }}" {% if preferences.doors|stringformat:"d" == door|stringformat:"d" %}selected{% endif %}>{{ door }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="gearbox_type">Gearbox:</label>
+                            <select id="gearbox_type" name="gearbox_type">
+                                {% for gearbox in gearbox_choices %}
+                                    <option value="{{ gearbox }}" {% if preferences.transmission == gearbox %}selected{% endif %}>{{ gearbox|capfirst }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fuel_type">Fuel Type:</label>
+                            <select id="fuel_type" name="fuel_type">
+                                {% for fuel in fuel_choices %}
+                                    <option value="{{ fuel }}" {% if preferences.fuel_type == fuel %}selected{% endif %}>{{ fuel|capfirst }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="max_price">Max Price:</label>
+                            <select id="max_price" name="max_price">
+                                {% for price in price_choices %}
+                                    <option value="{{ price }}" {% if preferences.max_price == price %}selected{% endif %}>{{ price }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;">
+                        <button type="submit" name="action" value="reset" style="background-color: #e74c3c;">Reset Preferences</button>
+                        <button type="submit" name="action" value="save">Save Preferences</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- right box, acc detail and reset password -->
+        <div class="section-box">
+            <h1>Account Details</h1>
+            <form>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="{{ user.email }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" value="{{ user.first_name }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" value="{{ user.last_name }}" readonly>
+                </div>
+                <a href="{% url 'password_reset' %}" style="display: block; width: 100%; padding: 10px 0px; font-size: 1rem; background-color: #0f9dba; color: white; text-align: center; text-decoration: none; border-radius: 5px; margin-top: 10px;">Change Password</a>
+
+            </form>
+        </div>       
+</body>
+</html>

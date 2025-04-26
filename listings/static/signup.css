@@ -1,0 +1,125 @@
+/* general page styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* center the signup section vertically and horizontally */
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100vh - 50px); /* adjusted for navbar height */
+    margin-top: 30px; /* same margin as login page */
+}
+
+/* signup box styling */
+.signup-container {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 420px; /* matches login box width */
+    border: 1px solid #ddd;
+}
+
+/* signup title */
+h1 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 25px;
+}
+
+/* form layout */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* input field styling */
+input {
+    width: 100%;
+    max-width: 320px;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: border 0.3s ease-in-out;
+}
+
+/* input focus effect */
+input:focus {
+    border: 1px solid #0084A6;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 132, 166, 0.3);
+}
+
+/* label styling */
+label {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: left;
+    width: 100%;
+    max-width: 320px;
+    display: block;
+    margin-top: 12px;
+    color: #333;
+}
+
+/* signup button styling */
+button {
+    background: #0084A6;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    max-width: 320px;
+    margin-top: 15px;
+}
+
+/* signup button hover effect */
+button:hover {
+    background: #00708E;
+    box-shadow: 0 4px 12px rgba(0, 112, 142, 0.3);
+}
+
+/* text below the form (already have an account?) */
+p {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* links inside paragraph */
+a {
+    color: #0084A6;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* mobile responsive adjustments */
+@media (max-width: 768px) {
+    .signup-container {
+        width: 90%;
+        padding: 30px;
+    }
+
+    input, button {
+        max-width: 100%;
+    }
+}

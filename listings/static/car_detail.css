@@ -1,0 +1,237 @@
+/* base styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* container settings */
+.container {
+    max-width: 1800px;
+    margin: 30px auto;
+    padding: 0 30px;
+}
+
+/* layout for main content (image and info) */
+.main-content {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    padding: 40px 0;
+    flex-wrap: wrap;
+}
+
+/* left side image section */
+.image-section {
+    flex: 1.2;
+    position: relative;
+}
+
+/* wrapper for main car image carousel */
+.image-carousel-wrapper {
+    position: relative;
+    max-width: 100%;
+    aspect-ratio: 4/3;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 0;
+}
+
+/* each individual carousel image */
+.carousel-image {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* only show active carousel image */
+.carousel-image.active {
+    display: block;
+}
+
+/* carousel navigation buttons (left and right arrows) */
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+    font-weight: bold;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* hover effect on carousel arrows */
+.carousel-nav:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* position left arrow */
+.carousel-nav.left {
+    left: 10px;
+}
+
+/* position right arrow */
+.carousel-nav.right {
+    right: 10px;
+}
+
+/* thumbnail image row under main carousel */
+.thumbnail-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* styling for each thumbnail */
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border 0.3s ease;
+}
+
+/* hover effect on thumbnails */
+.thumbnail:hover {
+    border: 2px solid #007BFF;
+}
+
+/* right side info section (car details and seller info) */
+.info-section {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* button style for favorite button */
+.btn-primary {
+    background-color: #ff4081;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    margin-top: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* hover effect on favorite button */
+.btn-primary:hover {
+    background-color: #e73370;
+    transform: scale(1.05);
+}
+
+/* title above bottom carousel */
+.bottom-carousel-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 50px 0 20px;
+}
+
+/* container for other cars carousel */
+.bottom-carousel-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+/* wrapper for bottom carousel and arrows */
+.bottom-carousel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 0 20px;
+}
+
+/* scrollable area for bottom carousel */
+.bottom-carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 24px;
+    padding: 20px 0;
+}
+
+/* individual car cards in bottom carousel */
+.other-car-card {
+    flex: 0 0 auto;
+    width: 210px;
+    text-align: center;
+}
+
+/* images inside car cards */
+.other-car-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* car title below image */
+.other-car-card p {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+}
+
+/* left and right scroll arrows for bottom carousel */
+.bottom-carousel-arrow {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    font-size: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* hover effect on bottom carousel arrows */
+.bottom-carousel-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+}

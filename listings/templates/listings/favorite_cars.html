@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Favorites</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'fav.css' %}">
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if user.is_authenticated %}
+            {% if favorites %}
+                <div class="car-grid">
+                    {% for favorite in favorites %}
+                        <div class="car-card" id="favorite-{{ favorite.car.id }}">
+                            <a href="{% url 'car_detail' favorite.car.id %}">
+                                {% if favorite.car.images.first %}
+                                    <img src="{{ favorite.car.images.first.image.url }}" alt="{{ favorite.car.make }} {{ favorite.car.model }}">
+                                {% elif favorite.car.image %}
+                                    <img src="{{ favorite.car.image.url }}" alt="{{ favorite.car.make }} {{ favorite.car.model }}">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.jpg' %}" alt="No image available">
+                                {% endif %}
+                            </a>
+
+                            <h3>{{ favorite.car.make }} {{ favorite.car.model }}</h3>
+                            <p>{{ favorite.car.year }} • {{ favorite.car.transmission }}</p>
+                            <p>Mileage: {{ favorite.car.mileage }} miles</p>
+                            <p>Price: £{{ favorite.car.price }}</p>
+
+                            <button class="btn-remove" onclick="removeFavorite({{ favorite.car.id }})">Remove from Favourites</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-cars-message">You don't have any favourite cars yet.</p>
+            {% endif %}
+        {% else %}
+            <p class="no-cars-message">You must be logged in to view your favourites. Please <a href="{% url 'login' %}">log in</a> to continue.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        // function to remove a favourite car when button is clicked
+        function removeFavorite(carId) {
+            $.ajax({
+                // sends a POST request to the server to remove the car from favourites
+                url: `/favorites/remove/${carId}/`,  // calls the Django URL that handles removing a favourite
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },  // csrf token creates handshake to prevent unwanted activity from external users
+    
+                success: function () {
+                    // if the server responds successfully, fade out the removed car from the page
+                    $(`#favorite-${carId}`).fadeOut();
+                },
+    
+                error: function () {
+                    // if there's an error (like server fails), show an alert to the user
+                    alert("Failed to remove the car from favourites. Please try again.");
+                },
+            });
+        }
+    </script>
+    
+</body>
+</html>

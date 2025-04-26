@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cars</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'mycars.css' %}">
+
+    <script>
+        // script to delete the listing, user has to confirm they want to delete it before they do
+        function confirmDelete(event) {
+            event.preventDefault();
+            const confirmed = confirm("Are you sure you want to delete your listing?");
+            if (confirmed) {
+                event.target.closest("form").submit();
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if user.is_authenticated %}
+            {% if cars %}
+                <div class="car-grid">
+                    {% for car in cars %}
+                        <div class="car-card" id="car-{{ car.id }}">
+                            <a href="{% url 'car_detail' car.id %}">
+                                {% if car.images.first %}
+                                    <img src="{{ car.images.first.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                                {% elif car.image %}
+                                    <img src="{{ car.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder.jpg' %}" alt="No image available">
+                                {% endif %}
+                            </a>
+                            <h3>{{ car.make }} {{ car.model }}</h3>
+                            <p>{{ car.year }} • {{ car.transmission }}</p>
+                            <p>Mileage: {{ car.mileage }} miles</p>
+                            <p>Price: £{{ car.price }}</p>
+                            <p>Views: {{ car.views }}</p>
+                            <form action="{% url 'remove_car' car.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="button" class="btn-remove" onclick="confirmDelete(event)">Delete Listing</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-cars-message">You have not uploaded any cars yet.</p>
+            {% endif %}
+        {% else %}
+            <p class="no-cars-message">You must be logged in to view your cars. Please <a href="{% url 'login' %}">log in</a> to continue.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

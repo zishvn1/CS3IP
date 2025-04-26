@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Cars</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'nav.css' %}">
+    <link rel="stylesheet" href="{% static 'rec.css' %}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="{% url 'car_list' %}">
+                    <img src="{% static 'images/logo.jpg' %}" alt="Drive Time Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Main Navigation Links -->
+            <nav class="main-nav" aria-label="Main navigation">
+                <ul class="main-links">
+                    <li><a href="{% url 'car_list' %}" class="{% if request.resolver_match.url_name == 'car_list' %}active{% endif %}">Available Cars</a></li>
+                    <li><a href="{% url 'recommended_cars' %}" class="{% if request.resolver_match.url_name == 'recommended_cars' %}active{% endif %}">Recommended Cars</a></li>
+                    <li><a href="{% url 'upload_car' %}" class="{% if request.resolver_match.url_name == 'upload_car' %}active{% endif %}">Upload Your Car</a></li>
+                    <li><a href="{% url 'favorites' %}" class="{% if request.resolver_match.url_name == 'favorites' %}active{% endif %}">Your Favorites</a></li>
+                    <li><a href="{% url 'my_cars' %}" class="{% if request.resolver_match.url_name == 'my_cars' %}active{% endif %}">Your Cars</a></li>
+                </ul>
+            </nav>
+
+            <!-- Account Navigation Links -->
+            <nav class="account-nav" aria-label="Account navigation">
+                <ul class="account-links">
+                    <li><a href="{% url 'account_details' %}" class="{% if request.resolver_match.url_name == 'account_details' %}active{% endif %}">Your Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% if recommendations %}
+            <div class="car-grid">
+                {% for car in recommendations %}
+                    <div class="car-card">
+                        <a href="{% url 'car_detail' car.id %}">
+                            {% if car.images.first %}
+                                <img src="{{ car.images.first.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                            {% elif car.image %}
+                                <img src="{{ car.image.url }}" alt="{{ car.make }} {{ car.model }}">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.jpg' %}" alt="No image available">
+                            {% endif %}
+                            <h3>{{ car.make }} {{ car.model }}</h3>
+                        </a>
+
+                        <p>{{ car.year }} • {{ car.transmission }}</p>
+                        <p>Mileage: {{ car.mileage }} miles</p>
+                        <p>£{{ car.price }}</p>
+
+                        <a href="{% url 'car_detail' car.id %}" 
+                           style="
+                                display: inline-block;
+                                padding: 10px 15px;
+                                margin-top: 10px;
+                                background-color: #28a745;
+                                color: white;
+                                text-decoration: none;
+                                border-radius: 5px;
+                                font-size: 1rem;
+                                font-weight: bold;
+                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                                transition: background-color 0.3s, box-shadow 0.2s;
+                            "
+                           onmouseover="this.style.backgroundColor='#218838'; this.style.boxShadow='0 6px 8px rgba(0, 0, 0, 0.2)';"
+                           onmouseout="this.style.backgroundColor='#28a745'; this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';">
+                            View Details
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="font-size: 1.2rem; color: #555; text-align: center; margin-top: 40px;">
+                No recommended cars available based on your preferences.
+            </p>
+        {% endif %}
+    </div>
+</body>
+</html>

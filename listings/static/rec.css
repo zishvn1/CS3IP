@@ -1,0 +1,82 @@
+/* basic page setup */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+/* headings spacing */
+h1, h2 {
+    margin: 10px 0;
+}
+
+/* car list section (container for the car grid) */
+.car-list {
+    padding: 60px 20px;
+    margin: 0 auto;
+}
+
+/* grid layout for the car cards */
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* auto fills cards side by side */
+    gap: 40px;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* individual car card styling */
+.car-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    padding-bottom: 20px; /* leaves space for the button */
+}
+
+/* lift the card up slightly on hover */
+.car-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* car image inside the card */
+.car-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+}
+
+/* car title */
+.car-card h3 {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* small text under the title (year, mileage, etc.) */
+.car-card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* make links (car name) look like normal text */
+.car-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* prevent underline on hover too */
+.car-card a:hover {
+    text-decoration: none;
+}
+
+

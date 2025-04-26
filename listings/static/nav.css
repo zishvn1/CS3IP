@@ -1,0 +1,71 @@
+/* header styling */
+header {
+    background-color: #0f9dba; 
+    color: white; 
+    padding: 15px 20px; 
+    display: flex;
+    align-items: center; /* vertically center everything */
+}
+
+/* wrapper inside header */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    width: 100%;
+}
+
+/* logo styling */
+.logo-container .logo {
+    height: 70px; 
+    margin-right: 20px; 
+}
+
+/* main navigation bar: left side links */
+header nav.main-nav {
+    flex: 1; 
+}
+
+/* layout for links inside main navigation */
+header nav.main-nav ul {
+    display: flex; /* align links horizontally */
+    list-style: none; 
+    margin: 0;
+    padding: 0;
+    gap: 20px; 
+    font-family: 'Roboto', sans-serif;
+    align-items: center;
+}
+
+/* account navigation bar: right side links */
+header nav.account-nav ul {
+    display: flex; /* align links horizontally */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 20px; 
+    font-family: 'Roboto', sans-serif;
+    align-items: center;
+}
+
+/* all link styling inside both navs */
+header nav ul li a {
+    color: white; 
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px; 
+    border-radius: 5px; 
+}
+
+/* style for current page link */
+header nav ul li a.active {
+    background-color: #ffc107; 
+    color: #000; 
+}
+
+/* hover effect on all links */
+header nav ul li a:hover {
+    color: #ffcc00; 
+    background-color: rgba(255, 255, 255, 0.1); 
+}
+
