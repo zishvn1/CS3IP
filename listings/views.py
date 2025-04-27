@@ -129,6 +129,8 @@ def verify_pin(request):
                 user.is_active = True  # if the pin matches, activate the user
                 user.save()
 
+                send_welcome_email(user) # send welcome email
+
                 # delete the pin and user_id from the session
                 del request.session['verification_pin']
                 del request.session['user_id']
@@ -180,7 +182,7 @@ def resend_pin(request):
 
 def send_welcome_email(user):
     subject = 'Welcome to DriveTime, {}!'.format(user.first_name)
-    message = f'Hi {user.username}! Thank you for signing up with DriveTime, we are excited to have you on board.'
+    message = f'Hi {user.first_name}! Thank you for signing up with DriveTime, we are excited to have you on board.'
     from_email = settings.DEFAULT_FROM_EMAIL
     recipient_email = user.email
 
