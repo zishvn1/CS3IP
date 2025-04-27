@@ -86,10 +86,16 @@
             <p><strong>Number of Doors:</strong> {{ car.number_of_doors }}</p>
             <p><strong>Price:</strong> £{{ car.price }}</p>
 
+            {% if user.is_authenticated %}
             <h2>Seller Information</h2>
             <p><strong>Seller:</strong> {{ car.user.first_name }}</p>
-            <p><strong>Phone Number:</strong> {{ car.phone_number|default:"Not Provided" }}</p>
-            <p><strong>City:</strong> {{ car.city|default:"Not Provided" }}</p>
+            <p><strong>Phone Number:</strong> {{ car.phone_number }}</p>
+            <p><strong>City:</strong> {{ car.city }}</p>
+        {% else %}
+            <h2>Seller Information</h2>
+            <p>You must <a href="{% url 'login' %}">log in</a> to view seller details.</p>
+        {% endif %}
+        
 
         
         </div>
